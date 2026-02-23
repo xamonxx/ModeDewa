@@ -29,8 +29,8 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <!-- Toggle Button (ON) -->
-    <style name="Widget.ModeDewa.ToggleOn">
+    <!-- Toggle Button (ON) — explicit parent avoids implicit Widget.ModeDewa lookup -->
+    <style name="Widget.ModeDewa.ToggleOn" parent="">
         <item name="android:background">@color/toggle_on</item>
         <item name="android:textColor">@color/background_dark</item>
         <item name="android:textStyle">bold</item>
@@ -50,8 +50,8 @@
         <item name="cornerRadius">12dp</item>
     </style>
 
-    <!-- Section Title -->
-    <style name="TextAppearance.ModeDewa.SectionTitle">
+    <!-- Section Title — explicit parent avoids implicit TextAppearance.ModeDewa lookup -->
+    <style name="TextAppearance.ModeDewa.SectionTitle" parent="TextAppearance.Material3.TitleSmall">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/text_tertiary</item>
         <item name="android:textAllCaps">true</item>
@@ -59,7 +59,7 @@
     </style>
 
     <!-- Value Display (big numbers) -->
-    <style name="TextAppearance.ModeDewa.Value">
+    <style name="TextAppearance.ModeDewa.Value" parent="TextAppearance.Material3.HeadlineMedium">
         <item name="android:textSize">28sp</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textStyle">bold</item>
