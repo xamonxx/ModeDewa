@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import rikka.shizuku.Shizuku;
 public class ShizukuShell {
 
     private static final String TAG = "ShizukuShell";
+    private static Method sNewProcessMethod;
 
     public static class Result {
         public final boolean success;
@@ -98,8 +100,7 @@ public class ShizukuShell {
         }
 
         try {
-            Process process = Shizuku.newProcess(
-                    new String[]{"sh", "-c", command}, null, null);
+            Process process = createShizukuProcess(command);
 
             List<String> outputLines = new ArrayList<>();
             BufferedReader reader = new BufferedReader(
@@ -110,7 +111,6 @@ public class ShizukuShell {
             }
             reader.close();
 
-            // Read error stream too
             StringBuilder errorBuilder = new StringBuilder();
             BufferedReader errReader = new BufferedReader(
                     new InputStreamReader(process.getErrorStream()));
@@ -132,6 +132,20 @@ public class ShizukuShell {
             Log.e(TAG, "Execute failed: " + command, e);
             return new Result(false, null, e.getMessage());
         }
+    }
+
+    /**
+     * Create a Process via Shizuku using reflection to access the private newProcess method.
+     * Required for Shizuku API 13+ where newProcess() is private.
+     */
+    private static Process createShizukuProcess(String command) throws Exception {
+        if (sNewProcessMethod == null) {
+            sNewProcessMethod = Shizuku.class.getDeclaredMethod(
+                    "newProcess", String[].class, String[].class, String.class);
+            sNewProcessMethod.setAccessible(true);
+        }
+        return (Process) sNewProcessMethod.invoke(null,
+                new String[]{"sh", "-c", command}, null, null);
     }
 
     /**
